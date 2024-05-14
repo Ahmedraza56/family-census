@@ -3,9 +3,27 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start(); // Start the session
 
 include "config.php";
+session_start(); // Start the session
+
+// Check if user is logged in and set user_id in session
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+} else {
+    // If user is not logged in, handle it accordingly
+}
+
+// Check if user has already filled the form
+$sql_check = "SELECT * FROM members WHERE user_id = '$user_id'";
+// exit($sql_check);
+$result_check = mysqli_query($conn, $sql_check);
+if (mysqli_num_rows($result_check) > 0) {
+    header("Location: detail.php");
+    echo "<script>alert('You have already filled this form.');</script>";
+
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
@@ -27,34 +45,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
     // $community = mysqli_real_escape_string($conn, $_POST['community']);
 
-<<<<<<< Updated upstream
-    session_start();
-    $user_id = $_SESSION['user_id'];
-    // SQL query to insert data into the members table
-    $sql = "INSERT INTO members(user_id,first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 
-            VALUES ('$user_id','$first_name', '$last_name', '$family_name', '$date_of_birth', '$gender', '$father_name', '$mother_name', '$spouse_name', '$business_name', '$business_address', '$job_title', '$mobile_number', '$email', '$facebook_id', '$linkedin_id', '$twitter_id', '$additional_info')";
-=======
+
+    session_start(); // Start the session
+
     // Ensure user_id is set in the session
     if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
->>>>>>> Stashed changes
 
         // SQL query to insert data into the members table
         $sql = "INSERT INTO members(user_id, first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 
                 VALUES ('$user_id', '$first_name', '$last_name', '$family_name', '$date_of_birth', '$gender', '$father_name', '$mother_name', '$spouse_name', '$business_name', '$business_address', '$job_title', '$mobile_number', '$email', '$facebook_id', '$linkedin_id', '$twitter_id', '$additional_info')";
+                
+                if (mysqli_query($conn, $sql)) {
+                    echo "<script>alert('Form Submitted Successfully');</script>";
+                    if ($_SESSION['role'] == 0) {
+                        header("Location: detail.php");
+                        exit();
+                    } elseif ($_SESSION['role'] == 1) {
+                        header("Location: index.php");
+                        exit();
+                    }
+                } else {
+                    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                }
 
-        if (mysqli_query($conn, $sql)) {
-            echo "<script>alert('Form Submitted Successfully');</script>";
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
+
+
 
         mysqli_close($conn);
         exit();
     } else {
         echo "User ID is not set. Please log in.";
     }
+    
 }
+
 ?>
 
 <?php include "header.php" ?>

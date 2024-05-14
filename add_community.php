@@ -1,5 +1,12 @@
 <?php 
+
 include "header.php";
+
+$role = $_SESSION['role'];
+if($role == 0){
+    echo "<script>setTimeout(()=>{ window.location.href = 'form.php';})</script>";
+    die();
+}
 
 if(isset($_POST['save'])){
 

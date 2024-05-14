@@ -1,7 +1,12 @@
 <?php
-
 include "header.php";
 include "config.php";
+
+$role = $_SESSION['role'];
+if($role == 0){
+    echo "<script>setTimeout(()=>{ window.location.href = 'form.php';})</script>";
+    die();
+}
 
  ?>
 

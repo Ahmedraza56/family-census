@@ -29,6 +29,7 @@ if($result) {
 } else {
     $_SESSION['name'] = 'User';
 }
+
 ob_flush(); 
 ?>
 
@@ -109,7 +110,10 @@ ob_flush();
                 </div>
                 <div class="navbar-nav w-100">
                 <?php if($_SESSION['role'] == 0): ?>
-                        <a href="form.php" class="nav-item nav-link <?php if(basename($_SERVER['PHP_SELF']) == 'form.php') echo 'active'; ?>"><i class="fa fa-keyboard me-2"></i>Form</a>
+
+                   <?php if($_SESSION['role'] == 0 && !isset($_SESSION['form_filled'])): ?>
+    <a href="form.php" class="nav-item nav-link <?php if(basename($_SERVER['PHP_SELF']) == 'form.php') echo 'active'; ?>"><i class="fa fa-keyboard me-2"></i>Form</a>
+<?php endif; ?>
                         <a href="detail.php" class="nav-item nav-link <?php if(basename($_SERVER['PHP_SELF']) == 'detail.php') echo 'active'; ?>"><i class="fa fa-info-circle me-2"></i>Manage Detail</a>
                     <?php endif; ?>
 

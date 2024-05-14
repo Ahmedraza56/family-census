@@ -89,6 +89,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $user = mysqli_fetch_assoc($result);
         if($user['password'] == $password){
             $_SESSION['user_id'] = $user['id']; 
+            $_SESSION['role'] = $user['role']; 
+
             if($user['role'] == 0) {
                 header("Location: form.php");
             } elseif ($user['role'] == 1) {

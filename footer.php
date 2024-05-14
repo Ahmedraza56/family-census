@@ -7,7 +7,8 @@
                                 &copy; <a href="index.php">Family Census</a>, All Right Reserved.
                             <?php else: ?>
                                 &copy; Family Census, All Right Reserved.
-                            <?php endif; ?>            </div>
+                            <?php endif; ?>
+                                    </div>
 
         </div>
     </div>
