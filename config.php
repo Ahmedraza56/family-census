@@ -1,8 +1,8 @@
 <?php
 $dbHost = 'localhost'; 
-$dbUsername = 'root'; 
-$dbPassword = ""; 
-$dbName = 'jamiat_family_census'; 
+$dbUsername = 'fahad'; 
+$dbPassword = "c8R$!f@QW#2K"; 
+$dbName = 'khandaandb'; 
 
 $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 

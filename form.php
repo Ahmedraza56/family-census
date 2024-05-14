@@ -1,4 +1,5 @@
 <?php
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -24,6 +25,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
     // $community = mysqli_real_escape_string($conn, $_POST['community']);
 
+    session_start();
     $user_id = $_SESSION['user_id'];
     // SQL query to insert data into the members table
     $sql = "INSERT INTO members(user_id,first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 

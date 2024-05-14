@@ -88,8 +88,8 @@ include "config.php";
                             echo "<td>" . $row['twitter_id'] . "</td>";
                             echo "<td>" . $row['additional_info'] . "</td>";
                             echo "<td>";
-                            echo "<a href='edit_member.php?id=" . $row['id'] . "'><i class='fas fa-edit'></i></a>"; 
-                            echo "<a href='delete_member.php?id=" . $row['id'] . "' class='ms-2'><i class='fas fa-trash-alt'></i></a>";
+                            echo "<a href='edit_member.php?id=" . $row['id'] . "'><i class='fas fa-edit'></i></a> &nbsp;";
+                            echo "<a href='delete_member.php?id=" . $row['id'] . "' class='ms-2'><i style='color:red;' class='fas fa-trash-alt'></i></a>";
                             echo "</td>";
                             echo "</tr>";
 
