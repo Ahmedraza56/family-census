@@ -1,16 +1,17 @@
 <?php
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
+ob_start();
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
 include "config.php";
-session_start();
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if(!isset($_SESSION['user_id'])) {
     header("Location: signin.php");
     exit(); 
 }
-
 
 $user_id = $_SESSION['user_id'];
 $query = "SELECT `name` , `role` FROM users WHERE id = '$user_id'";
@@ -22,14 +23,15 @@ if($result) {
     $name = $row['name'];
     $role = $row['role'];
     
-
     $_SESSION['name'] = $name;
     $_SESSION['role'] = $role;
 
 } else {
     $_SESSION['name'] = 'User';
 }
+ob_flush(); 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -85,9 +87,15 @@ if($result) {
         <!-- Sidebar Start -->
         <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-light navbar-light">
-                <a href="index.php" class="navbar-brand mx-4 mb-3">
-                    <h3 class="text-primary">Family Census</h3>
-                </a>
+            <?php if ($_SESSION['role'] == 1): ?>
+                    <a href="index.php" class="navbar-brand mx-4 mb-3">
+                        <h3 class="text-primary">Family Census</h3>
+                    </a>
+                <?php else: ?>
+                    <div class="navbar-brand mx-4 mb-3">
+                        <h3 class="text-primary">Family Census</h3>
+                    </div>
+                <?php endif; ?>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
                         <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
@@ -102,6 +110,7 @@ if($result) {
                 <div class="navbar-nav w-100">
                 <?php if($_SESSION['role'] == 0): ?>
                         <a href="form.php" class="nav-item nav-link <?php if(basename($_SERVER['PHP_SELF']) == 'form.php') echo 'active'; ?>"><i class="fa fa-keyboard me-2"></i>Form</a>
+                        <a href="detail.php" class="nav-item nav-link <?php if(basename($_SERVER['PHP_SELF']) == 'detail.php') echo 'active'; ?>"><i class="fa fa-info-circle me-2"></i>Manage Detail</a>
                     <?php endif; ?>
 
                     <?php if($_SESSION['role'] == 1): ?>

@@ -3,8 +3,11 @@
     <div class="bg-light rounded-top p-4">
         <div class="row">
             <div class="col-12 col-sm-12 text-center text-sm-center">
-                &copy; <a href="index.php">Family Census</a>, All Right Reserved.
-            </div>
+            <?php if ($_SESSION['role'] == 1): ?>
+                                &copy; <a href="index.php">Family Census</a>, All Right Reserved.
+                            <?php else: ?>
+                                &copy; Family Census, All Right Reserved.
+                            <?php endif; ?>            </div>
 
         </div>
     </div>

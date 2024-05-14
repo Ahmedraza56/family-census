@@ -3,9 +3,11 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+session_start(); // Start the session
+
 include "config.php";
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
     $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
     $family_name = mysqli_real_escape_string($conn, $_POST['community']);
@@ -25,22 +27,33 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
     // $community = mysqli_real_escape_string($conn, $_POST['community']);
 
+<<<<<<< Updated upstream
     session_start();
     $user_id = $_SESSION['user_id'];
     // SQL query to insert data into the members table
     $sql = "INSERT INTO members(user_id,first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 
             VALUES ('$user_id','$first_name', '$last_name', '$family_name', '$date_of_birth', '$gender', '$father_name', '$mother_name', '$spouse_name', '$business_name', '$business_address', '$job_title', '$mobile_number', '$email', '$facebook_id', '$linkedin_id', '$twitter_id', '$additional_info')";
+=======
+    // Ensure user_id is set in the session
+    if (isset($_SESSION['user_id'])) {
+        $user_id = $_SESSION['user_id'];
+>>>>>>> Stashed changes
 
+        // SQL query to insert data into the members table
+        $sql = "INSERT INTO members(user_id, first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 
+                VALUES ('$user_id', '$first_name', '$last_name', '$family_name', '$date_of_birth', '$gender', '$father_name', '$mother_name', '$spouse_name', '$business_name', '$business_address', '$job_title', '$mobile_number', '$email', '$facebook_id', '$linkedin_id', '$twitter_id', '$additional_info')";
 
-    if(mysqli_query($conn, $sql)){
-        echo "<script>alert('Form Submitted Successfully');</script>";
-        header("Location: index.php");
-    } else{
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        if (mysqli_query($conn, $sql)) {
+            echo "<script>alert('Form Submitted Successfully');</script>";
+        } else {
+            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        }
+
+        mysqli_close($conn);
+        exit();
+    } else {
+        echo "User ID is not set. Please log in.";
     }
-
-    mysqli_close($conn);
-    exit(); 
 }
 ?>
 
@@ -70,9 +83,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <?php
                             $sql = "SELECT community_name FROM community";
                             $result = mysqli_query($conn, $sql);
-                            
-                            if(mysqli_num_rows($result) > 0) {
-                                while($row = mysqli_fetch_assoc($result)) {
+
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
                                     $community_name = $row['community_name'];
                                     echo "<option value='$community_name'>$community_name</option>";
                                 }
