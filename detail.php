@@ -21,9 +21,11 @@ $result = mysqli_query($conn, $sql);
 if (mysqli_num_rows($result) > 0) {
     $user_details = mysqli_fetch_assoc($result);
 } else {
-    echo "No user details found.";
+    echo "<script>alert('No details found.');</script>";
+    echo "<script>setTimeout(()=>{ window.location.href = 'form.php' })</script>";
     exit();
 }
+
 
 // Update user details if form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -177,3 +179,5 @@ function enableEditing() {
 </script>
 
 <?php include "footer.php" ?>
+
+

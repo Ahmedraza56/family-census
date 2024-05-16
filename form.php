@@ -5,18 +5,14 @@ error_reporting(E_ALL);
 
 
 include "config.php";
-session_start(); // Start the session
+session_start();
 
-// Check if user is logged in and set user_id in session
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 } else {
-    // If user is not logged in, handle it accordingly
 }
 
-// Check if user has already filled the form
 $sql_check = "SELECT * FROM members WHERE user_id = '$user_id'";
-// exit($sql_check);
 $result_check = mysqli_query($conn, $sql_check);
 if (mysqli_num_rows($result_check) > 0) {
     header("Location: detail.php");
@@ -43,16 +39,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $linkedin_id = mysqli_real_escape_string($conn, $_POST['linkedin_id']);
     $twitter_id = mysqli_real_escape_string($conn, $_POST['twitter_id']);
     $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
-    // $community = mysqli_real_escape_string($conn, $_POST['community']);
 
 
-    session_start(); // Start the session
+    session_start(); 
 
-    // Ensure user_id is set in the session
     if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
 
-        // SQL query to insert data into the members table
         $sql = "INSERT INTO members(user_id, first_name, last_name, family_name, date_of_birth, gender, father_name, mother_name, spouse_name, business_name, business_address, job_title, mobile_number, email, facebook_id, linkedin_id, twitter_id, additional_info) 
                 VALUES ('$user_id', '$first_name', '$last_name', '$family_name', '$date_of_birth', '$gender', '$father_name', '$mother_name', '$spouse_name', '$business_name', '$business_address', '$job_title', '$mobile_number', '$email', '$facebook_id', '$linkedin_id', '$twitter_id', '$additional_info')";
                 

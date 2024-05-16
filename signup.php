@@ -1,4 +1,10 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -6,25 +12,65 @@ error_reporting(E_ALL);
 include "config.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-    // SQL query to insert data into the users table
-    $sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
-    // exit($sql);
+    $checkEmailQuery = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $checkEmailQuery);
+    if (mysqli_num_rows($result) > 0) {
+        echo "<script>alert('This email is already registered.');</script>";
+        echo "<script>setTimeout(()=>{ window.location.href = 'signin.php'} )</script>";
+        exit;
+    }
+
+    $randomPassword = generateRandomPassword(); 
+
+    $sql = "INSERT INTO users (name,email, password) VALUES ('$name','$email', '$randomPassword')";
+
 
     if (mysqli_query($conn, $sql)) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'muhammadfahadnaeem4@gmail.com'; 
+            $mail->Password   = 'xjxfzyuuxjfeddnk';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+
+            $mail->setFrom('your-email@gmail.com', 'Family Census');
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Your Family Census Account Details';
+            $mail->Body    = "Hello,<br><br>Your account has been created for Family Census.<br><br>Email: $email<br>Password: $randomPassword<br><br>You can login using this email and password.<br><br>Best regards,<br>Family Census Team";
+
+            $mail->send();
+            echo 'Message has been sent';
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+
         header("Location: index.php");
     } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
 
-    // Close connection
     mysqli_close($conn);
 }
 
+function generateRandomPassword($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $password;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,41 +82,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta content="" name="keywords">
     <meta content="" name="description">
 
-    <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
-    <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
-    <!-- Customized Bootstrap Stylesheet -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-        <!-- Spinner End -->
 
 
-        <!-- Sign Up Start -->
         <div class="container-fluid">
             <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
                 <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
@@ -82,17 +119,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <h3>Sign Up</h3>
                         </div>
                         <form action="" method="post">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingText" placeholder="jhondoe" name="name">
-                                <label for="floatingText">Username</label>
+                        <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="floatingInput" placeholder="" name="name">
+                                <label for="floatingInput">Name</label>
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
                                 <label for="floatingInput">Email address</label>
-                            </div>
-                            <div class="form-floating mb-4">
-                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
-                                <label for="floatingPassword">Password</label>
                             </div>
                             <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign Up</button>
                         </form>
@@ -101,10 +134,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
         </div>
-        <!-- Sign Up End -->
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
@@ -115,8 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
-    <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>
 
 </html>
+
